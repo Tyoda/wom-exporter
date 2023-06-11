@@ -57,7 +57,7 @@ class CE_OT_export_dae(bpy.types.Operator, ExportHelper):
         name="Tangent Arrays",
         description="Export Tangent and Binormal arrays "
                     "(for normal mapping).",
-        default=False,
+        default=True,
     )
 
     use_export_selected : BoolProperty(
@@ -76,7 +76,7 @@ class CE_OT_export_dae(bpy.types.Operator, ExportHelper):
     use_y_is_up : BoolProperty(
         name="Y is up",
         description="Use the Y axis as up and Z as forward",
-        default=False,
+        default=True,
     )
 
     # use_active_layers : BoolProperty(
