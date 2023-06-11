@@ -46,6 +46,11 @@ class LittleEndianOutput:
         self.write_int32(len(string_bytes))
         self.file.write(string_bytes)
 
+    def write_matrix4f(self, matrix):
+        for i in range(4):
+            for j in range(4):
+                self.write_float(matrix[i][j])
+
     def close(self):
         self.file.close()
 
@@ -294,6 +299,37 @@ class WOMExporter:
             print(e)
             raise e
 
+    def write_armature(self, output, armature):
+        try:
+            print("exporting armature: "+armature.name)
+            num_joints = len(armature.data.bones)
+            output.write_int32(num_joints)
+            print("Number of joints: "+str(num_joints))
+            for bone in armature.data.bones:
+                name = bone.name
+                parent_name = ""
+                if bone.parent is None:
+                    name = "ROOT"
+                else:
+                    parent_name = bone.parent.name
+                output.write_string(parent_name)
+                output.write_string(name)
+                
+                is_child_of_blend = False # TODO: no idea what this is. something to do with constraints ...?
+                output.write_byte(1 if is_child_of_blend else 0)
+                
+                bind_matrix = bone.matrix_local
+                if not bone.parent is None:
+                    bind_matrix = bone.parent.matrix_local.inverted_safe() @ bind_matrix
+                bind_offset = bone.matrix_local
+
+                output.write_matrix4f(bind_matrix)
+                output.write_matrix4f(bind_offset)
+        except Exception as e:
+            print("Exception in armature export:")
+            print(e)
+            raise e
+
     def export(self):
         try:
             # export main file
@@ -301,9 +337,12 @@ class WOMExporter:
             print("Starting export.")
 
             meshes = []
+            armatures = []
             for node in sorted(self.scene.objects, key=lambda x: x.name):
                 if node.type == "MESH" and (not self.config["use_export_selected"] or node.select_get()):
                     meshes.append(node)
+                if node.type == "ARMATURE":
+                    armatures.append(node)
             output.write_int32(len(meshes))
             print(f'Exporting {len(meshes)} meshes.')
 
@@ -316,18 +355,15 @@ class WOMExporter:
                 else:
                     self.write_mesh(output, mesh, None)
 
-                print("hey")
                 material_count = len(mesh.data.materials)
                 output.write_int32(material_count)
                 for i in range(material_count):
                     self.write_material(output, mesh.data.materials[0])
-                print("ho")
-
-            # joints
-            num_joints = 0
-            output.write_int32(num_joints)
-            for i in range(num_joints):
-                pass # TODO: Export joints
+                
+            if len(armatures) > 1:
+                print("Warning: More than 1 armature found. This is not supported by WU. Using the first one found.")
+            if len(armatures) > 0:
+                self.write_armature(output, armatures[0])
 
             for i in range(len(meshes)):
                 has_skinning = False
