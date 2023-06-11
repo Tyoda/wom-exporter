@@ -150,7 +150,7 @@ class WOMExporter:
                 output.write_float(v.vertex.x)
                 if self.config["use_y_is_up"]:
                     output.write_float(v.vertex.z)
-                    output.write_float(v.vertex.y)
+                    output.write_float(-v.vertex.y)
                 else:
                     output.write_float(v.vertex.y)
                     output.write_float(v.vertex.z)
@@ -160,7 +160,7 @@ class WOMExporter:
                 if self.config["use_y_is_up"]:
                     temp = normal.y
                     normal.y = normal.z
-                    normal.z = temp
+                    normal.z = -temp
                 output.write_float(v.normal.x)
                 output.write_float(v.normal.y)
                 output.write_float(v.normal.z)
@@ -206,12 +206,8 @@ class WOMExporter:
 
             for face in good_faces:
                 output.write_short16(face[0])
-                if self.config["use_y_is_up"]:
-                    output.write_short16(face[2])
-                    output.write_short16(face[1])
-                else:
-                    output.write_short16(face[1])
-                    output.write_short16(face[2])
+                output.write_short16(face[1])
+                output.write_short16(face[2])
         except Exception as e:
             print("Exception in mesh export:")
             print(e)
