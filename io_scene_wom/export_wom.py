@@ -157,7 +157,6 @@ class WOMExporter:
 
                 # normal
                 normal = v.normal
-                print(normal)
                 if self.config["use_y_is_up"]:
                     temp = normal.y
                     normal.y = normal.z
