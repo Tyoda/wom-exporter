@@ -225,8 +225,7 @@ class WOMExporter:
                 if tn.type == 'TEX_IMAGE':
                     textures.append(tn)
             if len(textures) > 0:
-                texture_name = textures[0].image.filepath
-                texture_name = texture_name.split("/")[-1]
+                texture_name = os.path.basename(textures[0].image.filepath)
                 if self.config["use_copy_images"]:
                     imgpath = textures[0].image.filepath
                     if imgpath.startswith("//"):
