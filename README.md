@@ -7,7 +7,9 @@ At a later date this addon will support exporting animations as well.
  1. Download the [latest release](https://github.com/Tyoda/wom-exporter/releases/latest), or the latest version in the repo using git.
  2. Locate your blender installation.
  3. Copy the io_scene_wom folder and its contents into your addons folder. In your installation folder you will find the folder `3.5/scripts/addons`.
- 4. Launch or restart blender. Export like any other format. And use wisely!
+ 4. Launch or restart blender.
+ 5. Enable the extension in Settings in Add-ons.
+ 6. Export like any other format. And use wisely!
 
 # Which version of blender
 I made the addon using blender 3.5.1. Any other versions may or may not work. I will try to ensure the latest version of blender always works.
